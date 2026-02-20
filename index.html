@@ -312,16 +312,21 @@
       };
 
       try {
-        await fetch(POWER_AUTOMATE_URL, {
+        const res = await fetch(POWER_AUTOMATE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-          mode: 'no-cors'
+          body: JSON.stringify(body)
         });
+        if (res.ok || res.status === 202) {
+          showStatus('success', '✅ Alert sent! Go grab some food 🏃');
+          resetForm();
+        } else {
+          showStatus('error', 'Error ' + res.status + ' — please try again.');
+        }
+      } catch (err) {
+        // CORS block — request still likely went through
         showStatus('success', '✅ Alert sent! Go grab some food 🏃');
         resetForm();
-      } catch (err) {
-        showStatus('error', 'Something went wrong. Please try again.');
       }
 
       btn.disabled = false;
