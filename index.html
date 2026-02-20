@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🍕 FoodFinders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0e0c;
+      --card: #1a1814;
+      --border: #2e2b25;
+      --accent: #f5a623;
+      --accent2: #e8522a;
+      --text: #f0ebe0;
+      --muted: #7a7060;
+      --input-bg: #111009;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background-image:
+        radial-gradient(ellipse 60% 50% at 70% 10%, rgba(245,166,35,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(232,82,42,0.05) 0%, transparent 60%);
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 480px;
+      animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      margin-bottom: 2rem;
+    }
+
+    .emoji-badge {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 0.75rem;
+      animation: bounce 2.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-6px) rotate(3deg); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      margin-top: 0.6rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    label .req {
+      color: var(--accent);
+      margin-left: 2px;
+    }
+
+    input, select, textarea {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.65rem 0.85rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(245,166,35,0.12);
+    }
+
+    select option { background: #1a1814; }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    .food-chip {
+      cursor: pointer;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.3rem;
+      text-align: center;
+      font-size: 0.8rem;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .food-chip:hover { border-color: var(--accent); }
+
+    .food-chip.selected {
+      background: rgba(245,166,35,0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .food-chip .chip-emoji { display: block; font-size: 1.3rem; margin-bottom: 2px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+
+    button[type="submit"] {
+      margin-top: 0.4rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0f0e0c;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      width: 100%;
+    }
+
+    button[type="submit"]:hover { transform: translateY(-1px); opacity: 0.92; }
+    button[type="submit"]:active { transform: translateY(0); }
+    button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .status {
+      display: none;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .status.success {
+      display: block;
+      background: rgba(80,200,100,0.12);
+      border: 1px solid rgba(80,200,100,0.3);
+      color: #6ddb82;
+    }
+
+    .status.error {
+      display: block;
+      background: rgba(232,82,42,0.12);
+      border: 1px solid rgba(232,82,42,0.3);
+      color: #f07050;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <span class="emoji-badge">🍕</span>
+      <h1><span>Food</span>Finders</h1>
+      <p class="subtitle">Send a quick alert to the team — before it's gone.</p>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label>What kind of food? <span class="req">*</span></label>
+        <div class="food-grid" id="foodChips">
+          <div class="food-chip" data-value="Pizza 🍕"><span class="chip-emoji">🍕</span>Pizza</div>
+          <div class="food-chip" data-value="Tacos 🌮"><span class="chip-emoji">🌮</span>Tacos</div>
+          <div class="food-chip" data-value="Sandwiches 🥪"><span class="chip-emoji">🥪</span>Sandwiches</div>
+          <div class="food-chip" data-value="Donuts 🍩"><span class="chip-emoji">🍩</span>Donuts</div>
+          <div class="food-chip" data-value="Burgers 🍔"><span class="chip-emoji">🍔</span>Burgers</div>
+          <div class="food-chip" data-value="Snacks 🍿"><span class="chip-emoji">🍿</span>Snacks</div>
+          <div class="food-chip" data-value="Salads 🥗"><span class="chip-emoji">🥗</span>Salads</div>
+          <div class="food-chip" data-value="Desserts 🎂"><span class="chip-emoji">🎂</span>Desserts</div>
+          <div class="food-chip" data-value="Other 🍽️"><span class="chip-emoji">🍽️</span>Other</div>
+        </div>
+        <input type="text" id="foodCustom" placeholder="Describe or add detail (e.g. 'Pepperoni + veggie pizzas')" />
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Location <span class="req">*</span></label>
+          <input type="text" id="location" placeholder="e.g. 3rd floor kitchen" />
+        </div>
+        <div class="field">
+          <label>How long?</label>
+          <select id="duration">
+            <option value="">Not sure</option>
+            <option value="~15 minutes">~15 min</option>
+            <option value="~30 minutes">~30 min</option>
+            <option value="~1 hour">~1 hour</option>
+            <option value="All afternoon">All afternoon</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Brought by</label>
+        <input type="text" id="sender" placeholder="Your name or department (optional)" />
+      </div>
+
+      <div class="field">
+        <label>Extra notes</label>
+        <textarea id="notes" placeholder="Dietary info, leftovers policy, etc."></textarea>
+      </div>
+
+      <button type="submit" id="sendBtn" onclick="sendAlert()">🔔 Alert the Team</button>
+      <div class="status" id="status"></div>
+    </div>
+
+
+  </div>
+
+  <script>
+    const POWER_AUTOMATE_URL = "https://default0a53a6aa263448e0925d380ca1cd78.11.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/de9d1fe6297f47c48cbcfff54d3beeda/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9WJDFOoXEEFpR1328hDFVsaFZnb3aK6La4L_bdSHSjI";
+
+    // Food chip selection
+    let selectedChips = [];
+    document.querySelectorAll('.food-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+        const val = chip.dataset.value;
+        if (chip.classList.contains('selected')) {
+          selectedChips.push(val);
+        } else {
+          selectedChips = selectedChips.filter(v => v !== val);
+        }
+      });
+    });
+
+    async function sendAlert() {
+      const location = document.getElementById('location').value.trim();
+      const foodCustom = document.getElementById('foodCustom').value.trim();
+      const duration = document.getElementById('duration').value;
+      const sender = document.getElementById('sender').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const btn = document.getElementById('sendBtn');
+
+      // Validation
+      const foodDesc = [...selectedChips, foodCustom].filter(Boolean).join(', ');
+      if (!foodDesc) { showStatus('error', 'Please select or describe the food.'); return; }
+      if (!location) { showStatus('error', 'Please enter a location.'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      const body = {
+        food: foodDesc,
+        location: location,
+        duration: duration || 'Not specified',
+        sender: sender || 'Anonymous',
+        notes: notes || ''
+      };
+
+      try {
+        await fetch(POWER_AUTOMATE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          mode: 'no-cors'
+        });
+        showStatus('success', '✅ Alert sent! Go grab some food 🏃');
+        resetForm();
+      } catch (err) {
+        showStatus('error', 'Something went wrong. Please try again.');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '🔔 Alert the Team';
+    }
+
+    function showStatus(type, msg) {
+      const el = document.getElementById('status');
+      el.className = 'status ' + type;
+      el.textContent = msg;
+      setTimeout(() => el.style.display === 'none' ? null : null, 5000);
+    }
+
+    function resetForm() {
+      document.getElementById('location').value = '';
+      document.getElementById('foodCustom').value = '';
+      document.getElementById('duration').value = '';
+      document.getElementById('sender').value = '';
+      document.getElementById('notes').value = '';
+      document.querySelectorAll('.food-chip.selected').forEach(c => c.classList.remove('selected'));
+      selectedChips = [];
+    }
+  </script>
+</body>
+</html>
